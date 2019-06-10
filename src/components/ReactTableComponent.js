@@ -176,6 +176,7 @@ subscribeStock = (symbol, ctd) => {
                 if(!!~value.indexOf("P")){
                   var res = value.split("P");
                   obj.strike = res[1];
+                  strikedata = strikedata + 12;
 
                 }
 
@@ -235,19 +236,7 @@ subscribeStock = (symbol, ctd) => {
             }
             
     
-       } 
-var data2 = [
-{bidvalue: "Z", bidsize: 18.85, askvalue: "B", asksize: 19.45},
-{bidvalue: "C", bidsize: 153.9, askvalue: "C", asksize: 155.1},
-{bidvalue: "C", bidsize: 26, askvalue: "B", asksize: 26.85},
-{bidvalue: "Z", bidsize: 5.9, askvalue: "Q", asksize: 6.1}]
-
-
-   
-      console.log(data2)
-
-
-    
+       }     
 
   
     }
@@ -348,16 +337,28 @@ var data2 = [
     Header: 'BIDSIZE',
     accessor: 'bidsize',
     Cell: row => (
-          <div>
+          <div
+           style={{
+             color: row.value > row.original
+                ? '#4C9A2A'
+                : row.value < row.original
+                ? '#f44336'
+                : '#000000',
+      
+        }} 
+        >
           {row.value}
           </div>
         )
   },
     {
     Header: 'STRIKE',
-    headerStyle: { whiteSpace: 'unset' },
-    style: { whiteSpace: 'unset' },
-    maxWidth: 150,
+    accessor: 'strike',
+      Cell: row => (
+          <div>
+          {row.value}
+          </div>
+        )
   },
 ]}
         />
