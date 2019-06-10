@@ -33,7 +33,7 @@ UpdateStatus = (soemhf) => {
 TUIsetOpen = async ()=>{
         this.ctd = new WebSocket("wss://tasty.dxfeed.com/live/cometd");
         var cometds =
-            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDExODYwNCwxNTYwMDMyMjA0LFUwMDAwNTczMDA2.16Be8ijhlFsOC_OD2-QuEog-72wHAkrYdilkbTWx6vQ"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
+            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDIxNTYyOSwxNTYwMTI5MjI5LFUwMDAwNjEyODkz.erP-jl5BtmNUI_BsDjLXvTAbCKXB4NqcW8bP6jZKgwI"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
             this.ctd.onclose = () => {
                 console.log("closed.");
                 this.UpdateStatus("Offline");
@@ -313,7 +313,15 @@ var data2 = [
     Header: 'ASKSIZE',
     accessor: 'asksize',
     Cell: row => (
-          <div>
+          <div
+            style={{
+             color: row.value > row.original
+                ? '#4C9A2A'
+                : row.value < row.original
+                ? '#f44336'
+                : '#000000',
+      
+        }}>
           {row.value}
           </div>
         )
