@@ -1,13 +1,19 @@
-import React from 'react';
-import ReactTableComponent from './ReactTableComponent.js';
+import React ,{Component} from 'react';
+import ReactTableComponent from './components/ReactTableComponent.js';
 
 
-function App() {
+
+
+class App extends Component {
+
+
+  render(){
   return (
     <div className="App">
       <ReactTableComponent />
     </div>
   );
+}
 }
 
 export default App;
