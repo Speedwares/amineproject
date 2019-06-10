@@ -12,7 +12,8 @@ class ReactTableComponent extends Component {
                asksize: '',
                askvalue: '',
                bidsize: '',
-               bidvalue: ''
+               bidvalue: '',
+               strike: '',
                 }]
   }
 
@@ -158,6 +159,7 @@ subscribeStock = (symbol, ctd) => {
        var seconddata = 6;
        var thirddata = 9;
        var fourthdata = 10;
+       var strikedata = 0;
        var obj = {}
        var self = this;
       
@@ -170,6 +172,20 @@ subscribeStock = (symbol, ctd) => {
             if ( typeof(json[0].data) != "undefined" && json[0].data[0][0] =='Quote'){
               console.log(json[0].data[1])
             json[0].data[1].forEach((value, key)=>{
+              if(arrnum == strikedata){
+                if(!!~value.indexOf("P")){
+                  var res = value.split("P");
+                  obj.strike = res[1];
+
+                }
+
+                 if(!!~value.indexOf("C")){
+                  var res2 = value.split("C");
+                  obj.strike = res2[1];
+                  strikedata = strikedata + 12;
+
+                }
+              }
               if(arrnum == firstdata){
                 obj.bidvalue = value;
                 firstdata = firstdata + 12
