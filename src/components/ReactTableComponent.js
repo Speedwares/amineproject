@@ -164,12 +164,15 @@ subscribeStock = (symbol, ctd) => {
        var self = this;
       
 
-       ctd.onmessage = await function(message) {
+       ctd.onmessage = function(message) {
+        data = []
+        console.log('ok')
+
             var json = JSON.parse(message.data);
             console.log(json)
             num++;
             if (num > 3){
-            if ( typeof(json[0].data) != "undefined" && json[0].data[0][0] =='Quote'){
+            if ( typeof(json[0].data) != "undefined" && json[0].data[0] =='Quote'){
               console.log(json[0].data[1])
             json[0].data[1].forEach((value, key)=>{
               if(arrnum == strikedata){
@@ -242,6 +245,7 @@ subscribeStock = (symbol, ctd) => {
     }
 
     TUIpinger = (jsonClientId, ctd) => {
+        var self = this;
         console.log("pinger");
         console.log(jsonClientId)
 
@@ -263,6 +267,7 @@ subscribeStock = (symbol, ctd) => {
        // ctd.send(AddTicker);
 
        ctd.onmessage = function(message) {
+        self.TUIpinger2(jsonClientId, ctd)
             var json = JSON.parse(message.data);
             console.log(json)
        }
@@ -304,7 +309,7 @@ subscribeStock = (symbol, ctd) => {
     Cell: row => (
           <div
             style={{
-             color: row.value > row.original
+             color: row.original > 1
                 ? '#4C9A2A'
                 : row.value < row.original
                 ? '#f44336'
