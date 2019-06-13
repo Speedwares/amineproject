@@ -8,13 +8,8 @@ class ReactTableComponent extends Component {
     super()
     this.TUIpinger2 = this.TUIpinger2.bind(this);
           this.state = {
-    data: [{
-               asksize: '',
-               askvalue: '',
-               bidsize: '',
-               bidvalue: '',
-               strike: '',
-                }]
+    data: [],
+     previousdata:[]           
   }
 
 }
@@ -33,7 +28,7 @@ UpdateStatus = (soemhf) => {
 TUIsetOpen = async ()=>{
         this.ctd = new WebSocket("wss://tasty.dxfeed.com/live/cometd");
         var cometds =
-            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDIxNTYyOSwxNTYwMTI5MjI5LFUwMDAwNjEyODkz.erP-jl5BtmNUI_BsDjLXvTAbCKXB4NqcW8bP6jZKgwI"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
+            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDUzNDY2NCwxNTYwNDQ4MjY0LFUwMDAwNjEyODkz.-EPQn_mUF1qN26-5TPpPxYz1gOGUpQ4O6Wl3vqOJPsc"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
             this.ctd.onclose = () => {
                 console.log("closed.");
                 this.UpdateStatus("Offline");
@@ -172,13 +167,16 @@ subscribeStock = (symbol, ctd) => {
             console.log(json)
             num++;
             if (num > 3){
-            if ( typeof(json[0].data) != "undefined" && json[0].data[0] =='Quote'){
-              console.log(json[0].data[1])
+       if(typeof(json[0].data) != "undefined" && json[0].data[0][0]){
+            if(json[0].data[0][0] == 'Quote'){
+                  console.log(json[0].data[1])
+
             json[0].data[1].forEach((value, key)=>{
               if(arrnum == strikedata){
                 if(!!~value.indexOf("P")){
                   var res = value.split("P");
                   obj.strike = res[1];
+                  obj.contract = value;
                   strikedata = strikedata + 12;
 
                 }
@@ -186,6 +184,62 @@ subscribeStock = (symbol, ctd) => {
                  if(!!~value.indexOf("C")){
                   var res2 = value.split("C");
                   obj.strike = res2[1];
+                  obj.contract = value;
+                  strikedata = strikedata + 12;
+
+                }
+              }
+              if(arrnum == firstdata){
+                obj.bidvalue = value;
+                firstdata = firstdata + 12
+              }
+
+              if(arrnum == seconddata){
+                obj.bidsize = value;
+                seconddata = seconddata + 12;
+              }
+
+              if(arrnum == thirddata){
+                obj.askvalue = value;
+                thirddata = thirddata + 12;
+              }
+
+              if(arrnum == fourthdata){
+                obj.asksize = value;
+                fourthdata = fourthdata + 12;
+                data.push(obj)
+                obj = {};
+              }
+
+              arrnum++;
+
+            })
+            self.setState({
+                 data: data
+            })
+            console.log(self.state.data)
+           }
+         
+                
+           }
+
+           if ( typeof(json[0].data) != "undefined" && json[0].data[0] =='Quote'){
+              console.log(json[0].data[1])
+               data = []
+            json[0].data[1].forEach((value, key)=>{
+              if(arrnum == strikedata){
+                if(!!~value.indexOf("P")){
+                  var res = value.split("P");
+                  obj.strike = res[1];
+                  obj.contract = value;
+                  strikedata = strikedata + 12;
+
+                }
+
+                 if(!!~value.indexOf("C")){
+                  var res2 = value.split("C");
+                  obj.strike = res2[1];
+                  obj.contract = value;
                   strikedata = strikedata + 12;
 
                 }
@@ -222,9 +276,57 @@ subscribeStock = (symbol, ctd) => {
             // $('.askvalue').html(json[0].data[1][9]);
             // $('.asize').html(json[0].data[1][10]); 
             console.log('cool')
-             console.log(data)
+            console.log(data)
+
+        
+            console.log(self.state.data)
+          if (self.state.data.length > 1) {
+
+            data.forEach((value, key)=> {
+              console.log(key)
+              console.log(self.state.data)
+
+              if(self.state.data[key]){
+
+              if(self.state.data[key].asksize < data[key].asksize){
+                data[key].askcolor = 'green';
+              } else if (self.state.data[key].asksize > data[key].asksize){
+                data[key].askcolor = 'red';
+              }
+              if(self.state.data[key].bidsize < data[key].bidsize){
+                data[key].bidcolor = 'green';
+              } else if (self.state.data[key].bidsize > data[key].bidsize){
+                data[key].bidcolor = 'red';
+              }
+            }
+
+            })
+
+          }
+          console.log(data);
+
+
+           var tableData = self.state.data;
+           console.log(tableData)
+
+            data.forEach((value, key) => {
+
+            tableData.forEach((val, key2)=>{
+              if(tableData[key2].contract == data[key].contract){
+                console.log('gothere')
+                tableData[key2].asksize = data[key].asksize;
+                tableData[key2].bidsize = data[key].bidsize;
+                tableData[key2].bidcolor = data[key].bidcolor;
+                tableData[key2].askcolor = data[key].askcolor;
+              }
+
+            })
+
+
+            })
+
              self.setState({
-                 data: data
+                 data: tableData
              })
       
       
@@ -309,9 +411,9 @@ subscribeStock = (symbol, ctd) => {
     Cell: row => (
           <div
             style={{
-             color: row.original > 1
+             color: row.original.askcolor == 'green'
                 ? '#4C9A2A'
-                : row.value < row.original
+                : row.original.askcolor == 'red' 
                 ? '#f44336'
                 : '#000000',
       
@@ -344,9 +446,9 @@ subscribeStock = (symbol, ctd) => {
     Cell: row => (
           <div
            style={{
-             color: row.value > row.original
+             color: row.original.bidcolor == 'green'
                 ? '#4C9A2A'
-                : row.value < row.original
+                : row.original.bidcolor == 'red' 
                 ? '#f44336'
                 : '#000000',
       
