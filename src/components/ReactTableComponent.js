@@ -28,7 +28,7 @@ UpdateStatus = (soemhf) => {
 TUIsetOpen = async ()=>{
         this.ctd = new WebSocket("wss://tasty.dxfeed.com/live/cometd");
         var cometds =
-            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDUzNDY2NCwxNTYwNDQ4MjY0LFUwMDAwNjEyODkz.-EPQn_mUF1qN26-5TPpPxYz1gOGUpQ4O6Wl3vqOJPsc"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
+            '[{"ext":{"com.devexperts.auth.AuthToken":"dGFzdHksbGl2ZSwsMTU2MDYwODEyNywxNTYwNTIxNzI3LFUwMDAwNjEyODkz.tVrfIahRBRQ_6Zx2fkY2IXtTKRe1nQ8Pb460c7VD2gk"},"id":"1","version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0}}]';
             this.ctd.onclose = () => {
                 console.log("closed.");
                 this.UpdateStatus("Offline");
@@ -280,30 +280,8 @@ subscribeStock = (symbol, ctd) => {
 
         
             console.log(self.state.data)
-          if (self.state.data.length > 1) {
-
-            data.forEach((value, key)=> {
-              console.log(key)
-              console.log(self.state.data)
-
-              if(self.state.data[key]){
-
-              if(self.state.data[key].asksize < data[key].asksize){
-                data[key].askcolor = 'green';
-              } else if (self.state.data[key].asksize > data[key].asksize){
-                data[key].askcolor = 'red';
-              }
-              if(self.state.data[key].bidsize < data[key].bidsize){
-                data[key].bidcolor = 'green';
-              } else if (self.state.data[key].bidsize > data[key].bidsize){
-                data[key].bidcolor = 'red';
-              }
-            }
-
-            })
-
-          }
-          console.log(data);
+         
+            console.log(data);
 
 
            var tableData = self.state.data;
@@ -314,10 +292,19 @@ subscribeStock = (symbol, ctd) => {
             tableData.forEach((val, key2)=>{
               if(tableData[key2].contract == data[key].contract){
                 console.log('gothere')
+              if(tableData[key2].asksize < data[key].asksize){
+                tableData[key2].askcolor = 'green';
+              } else if (tableData[key2].asksize > data[key].asksize){
+                tableData[key2].askcolor = 'red';
+              }
+              if(tableData[key2].bidsize < data[key].bidsize){
+                tableData[key2].bidcolor = 'green';
+              } else if (tableData[key2].bidsize > data[key].bidsize){
+                tableData[key2].bidcolor = 'red';
+              }
                 tableData[key2].asksize = data[key].asksize;
                 tableData[key2].bidsize = data[key].bidsize;
-                tableData[key2].bidcolor = data[key].bidcolor;
-                tableData[key2].askcolor = data[key].askcolor;
+
               }
 
             })
